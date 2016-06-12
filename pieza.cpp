@@ -3,7 +3,7 @@
 
 using std::string;
 
-Pieza::Pieza(string color, int x, int y): color(color),x(x),y(y){
+Pieza::Pieza(string color, int x, int y,char tipo): color(color),x(x),y(y),tipo(tipo){
 
 }
 
@@ -28,4 +28,7 @@ void Pieza::setx(int x){
 }
 void Pieza::sety(int y){
 	this-> y = y;
+}
+char Pieza::getTipo()const{
+	return this-> tipo; 
 }

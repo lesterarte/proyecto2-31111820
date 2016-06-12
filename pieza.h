@@ -7,9 +7,10 @@ class Pieza{
 	private:
 		int x,y; 
 		string color; 
+		char tipo;
 
 	public:
-		Pieza(string,int,int);
+		Pieza(string,int,int,char);
 		virtual ~Pieza(); 
 		virtual bool mover(const Pieza&)const; 
 		string getColor()const; 
@@ -17,4 +18,6 @@ class Pieza{
 		int gety()const; 
 		void setx(int);
 		void sety(int);
+		char getTipo()const;
+		
 };

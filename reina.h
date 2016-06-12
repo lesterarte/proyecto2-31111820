@@ -4,10 +4,10 @@
 #include <string> 
 using std::string;
 
-class Arfil:public Pieza{
+class Reina:public Pieza{
 
 	public:
-		Arfil(string,int,int,char);
-		virtual ~Arfil(); 
+		Reina(string,int,int,char);
+		virtual ~Reina(); 
 		bool mover()const;
 };
