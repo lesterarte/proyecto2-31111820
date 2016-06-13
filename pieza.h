@@ -14,7 +14,7 @@ class Pieza{
 	public:
 		Pieza(string,int,int,char,bool);
 		virtual ~Pieza(); 
-		virtual bool mover(int,int); 
+		virtual bool mover(Pieza**,int,int); 
 		string getColor()const; 
 		int getx()const;
 		int gety()const; 

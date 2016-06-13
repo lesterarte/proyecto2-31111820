@@ -9,5 +9,5 @@ class Caballo:public Pieza{
 	public:
 		Caballo(string,int,int,char,bool);
 		virtual ~Caballo(); 
-		bool mover()const;
+		bool mover(Pieza**,int,int);
 };

@@ -9,5 +9,6 @@ class Arfil:public Pieza{
 	public:
 		Arfil(string,int,int,char,bool);
 		virtual ~Arfil(); 
-		bool mover(int,int);
+		bool mover(Pieza**,int,int);
+		bool validarSalto(Pieza**,int,int);
 };

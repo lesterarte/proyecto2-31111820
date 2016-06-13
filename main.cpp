@@ -8,6 +8,7 @@
 #include "peon.h"
 #include "torre.h"
 #include "caballo.h"
+#include <cmath>
 
 int mapainicial();
 void iniciarpiezas(Pieza**);
@@ -21,7 +22,7 @@ int main(int argc, char*argv[])
 	char seleccionMenu;
 	bool quienEstaJugando = true;
 	int contandoVAloresEntrada=0;
-	char guardaCoordenadasAMover[5];
+	char guardaCoordenadasAMover[6];
 	char tomandoValoresEntrada;
 	Pieza* arr[32];	
 	initscr();
@@ -86,9 +87,13 @@ int main(int argc, char*argv[])
 				contandoVAloresEntrada=0;
 				int ubicacionPieza = positionPiece(arr,(guardaCoordenadasAMover[0])-'A',(guardaCoordenadasAMover[1])-'1');
 				if( ubicacionPieza < 32 && arr[ubicacionPieza]->getColor() == "Blanca" 
-					&& arr[ubicacionPieza]->mover((guardaCoordenadasAMover[2])-'A',(guardaCoordenadasAMover[3])-'1') == true){
+					&& arr[ubicacionPieza]->mover(arr,(guardaCoordenadasAMover[3])-'A',(guardaCoordenadasAMover[4])-'1') == true){
 
-					quienEstaJugando=false;									
+					borrarmapa();
+					dibujarpiezas(arr);
+					quienEstaJugando=false;
+					mvprintw(19,112,"             ");	
+					move(22,112);								
 				}
 				else{
 					mvprintw(26,90,"MOVIMIENTO INCORRECTO");

@@ -9,5 +9,6 @@ class Torre:public Pieza{
 	public:
 		Torre(string,int,int,char,bool);
 		virtual ~Torre(); 
-		bool mover()const;
+		bool mover(Pieza**,int,int);
+		bool validarSalto(Pieza**,int,int);
 };
