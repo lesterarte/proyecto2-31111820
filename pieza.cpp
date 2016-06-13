@@ -3,15 +3,14 @@
 
 using std::string;
 
-Pieza::Pieza(string color, int x, int y,char tipo): color(color),x(x),y(y),tipo(tipo){
+Pieza::Pieza(string color, int x, int y,char tipo,bool isViva): color(color),x(x),y(y),tipo(tipo),isViva(isViva){
 
 }
 
 Pieza::~Pieza(){
 
 }
-bool Pieza::mover(const Pieza&)const{
-
+bool Pieza::mover(int inX, int inY){
 }
 string Pieza::getColor()const{
 	return this->color;
@@ -31,4 +30,13 @@ void Pieza::sety(int y){
 }
 char Pieza::getTipo()const{
 	return this-> tipo; 
+}
+
+bool Pieza::getIsViva()const{
+	return this-> isViva;
+}
+
+void Pieza::setIsViva(bool isViva){
+
+	this->isViva = isViva;
 }

@@ -8,16 +8,20 @@ class Pieza{
 		int x,y; 
 		string color; 
 		char tipo;
+		bool isViva;
+
 
 	public:
-		Pieza(string,int,int,char);
+		Pieza(string,int,int,char,bool);
 		virtual ~Pieza(); 
-		virtual bool mover(const Pieza&)const; 
+		virtual bool mover(int,int); 
 		string getColor()const; 
 		int getx()const;
 		int gety()const; 
 		void setx(int);
 		void sety(int);
 		char getTipo()const;
+		bool getIsViva()const;
+		void setIsViva(bool);
 		
 };

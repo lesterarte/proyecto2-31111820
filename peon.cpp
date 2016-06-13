@@ -3,7 +3,7 @@
 #include <string> 
 using std::string;
 
-Peon::Peon(string color,int x,int y, char tipo): Pieza(color,x,y,tipo){
+Peon::Peon(string color,int x,int y, char tipo,bool isViva): Pieza(color,x,y,tipo,isViva){
 }
 
 Peon::~Peon(){

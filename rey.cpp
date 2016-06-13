@@ -3,7 +3,7 @@
 #include <string> 
 using std::string;
 
-Rey::Rey(string color,int x,int y, char tipo): Pieza(color,x,y,tipo){
+Rey::Rey(string color,int x,int y, char tipo,bool isViva): Pieza(color,x,y,tipo,isViva){
 }
 
 Rey::~Rey(){

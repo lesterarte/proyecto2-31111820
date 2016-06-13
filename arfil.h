@@ -7,7 +7,7 @@ using std::string;
 class Arfil:public Pieza{
 
 	public:
-		Arfil(string,int,int,char);
+		Arfil(string,int,int,char,bool);
 		virtual ~Arfil(); 
-		bool mover()const;
+		bool mover(int,int);
 };

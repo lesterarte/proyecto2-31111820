@@ -1,5 +1,5 @@
 ajedrez: main.o	pieza.o arfil.o rey.o reina.o peon.o torre.o caballo.o 
-	g++ main.o pieza.o arfil.o -o dale
+	g++ main.o pieza.o arfil.o rey.o reina.o peon.o torre.o caballo.o -lncurses
 
 main.o: main.cpp pieza.h arfil.h rey.h reina.h peon.h torre.h caballo.h
 	g++ -c main.cpp

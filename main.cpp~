@@ -1,0 +1,18 @@
+#include <ncurses.h>
+#include <stdlib.h>
+#include "pieza.h"
+#include "arfil.h"
+#include "rey.h"
+#include "reina.h"
+#include "peon.h"
+#include "torre.h"
+#include "caballo.h"
+#include <string>
+
+
+
+int main(int argc, char*argv[])
+{
+			
+	return 0;
+}

@@ -7,7 +7,7 @@ using std::string;
 class Reina:public Pieza{
 
 	public:
-		Reina(string,int,int,char);
+		Reina(string,int,int,char,bool);
 		virtual ~Reina(); 
 		bool mover()const;
 };
