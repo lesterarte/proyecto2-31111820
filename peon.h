@@ -9,5 +9,5 @@ class Peon:public Pieza{
 	public:
 		Peon(string,int,int,char,bool);
 		virtual ~Peon(); 
-		bool mover()const;
+		bool mover(Pieza**,int,int);
 };

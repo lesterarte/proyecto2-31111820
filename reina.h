@@ -9,5 +9,5 @@ class Reina:public Pieza{
 	public:
 		Reina(string,int,int,char,bool);
 		virtual ~Reina(); 
-		bool mover()const;
+		bool mover(Pieza**,int,int); 
 };

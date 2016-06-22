@@ -1,5 +1,4 @@
 #include <ncurses.h>
-#include <stdlib.h>
 #include <string>
 #include "pieza.h"
 #include "arfil.h"
@@ -9,12 +8,15 @@
 #include "torre.h"
 #include "caballo.h"
 #include <cmath>
+#include <stdlib.h>
 
 int mapainicial();
 void iniciarpiezas(Pieza**);
 void eliminarPiezas(Pieza**);
 void dibujarpiezas(Pieza**);
 void borrarmapa();
+void montarpartidaGuardada(Pieza**);
+void guardarPartidaJugada(Pieza**);
 int positionPiece(Pieza**,int,int);
 
 int main(int argc, char*argv[])
@@ -24,14 +26,29 @@ int main(int argc, char*argv[])
 	int contandoVAloresEntrada=0;
 	char guardaCoordenadasAMover[6];
 	char tomandoValoresEntrada;
+	char salirDelTablero;
 	Pieza* arr[32];	
 	initscr();
 	refresh();
+
+	start_color();
+	attron(A_BOLD);
+	scrollok(curscr,TRUE);
+	init_pair(1, COLOR_RED,     COLOR_BLACK);
+    init_pair(2, COLOR_GREEN,   COLOR_BLACK);
+    init_pair(3, COLOR_CYAN,    COLOR_BLACK);
+    init_pair(4, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(5, COLOR_WHITE,   COLOR_BLACK);
+    init_pair(7,COLOR_WHITE, COLOR_BLACK);
+    bkgd(COLOR_PAIR(7) | A_BOLD);
+
+    attron(COLOR_PAIR(3));
 	mvprintw(17,35,"----------------------------BIENVENIDO--------------------------------");
 	mvprintw(18,35,"-------------------------------MENU-----------------------------------");
 	mvprintw(20,35,"		1 - JUGAR PARTIDA");
 	mvprintw(21,35,"		2 - CARGAR PARTIDA");
 	mvprintw(22,35,"		3 - SALIR");
+	attroff(COLOR_PAIR(3));
 	move(23,48);
 	noecho(); 
 
@@ -44,68 +61,294 @@ int main(int argc, char*argv[])
 			mapainicial();
 			iniciarpiezas(arr);
 			dibujarpiezas(arr);
-			move(19,112);
+						
+			while(salirDelTablero != 'S' && salirDelTablero != 's' ){
+				attron(COLOR_PAIR(2));
+				move(19,112);
+				while(quienEstaJugando == true){
+					while(contandoVAloresEntrada<5){
 
-			while(quienEstaJugando == true){
-				while(contandoVAloresEntrada<5){
-
-					noecho();
-					tomandoValoresEntrada = getch();
+						noecho();
+						tomandoValoresEntrada = getch();
 					
-					if(contandoVAloresEntrada == 0  || contandoVAloresEntrada == 3){
+						if(contandoVAloresEntrada == 0  || contandoVAloresEntrada == 3){
 
-						if((tomandoValoresEntrada >= 65) && (tomandoValoresEntrada <= 72)){
+							if((tomandoValoresEntrada >= 65) && (tomandoValoresEntrada <= 72)){
 
-							addch(tomandoValoresEntrada);
-							echo();
-							guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada; 
-							contandoVAloresEntrada++;
+								addch(tomandoValoresEntrada);
+								echo();
+								guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada; 
+								contandoVAloresEntrada++;
+							}
 						}
-					}
 
-					if(contandoVAloresEntrada == 1 || contandoVAloresEntrada == 4)
-					{
-						if((tomandoValoresEntrada >= 49) && (tomandoValoresEntrada <= 56)){
-
-							addch(tomandoValoresEntrada);
-							echo();
-							guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada;
-							contandoVAloresEntrada++; 
-						}
-					}
-					if(contandoVAloresEntrada == 2)
-					{
-						if(tomandoValoresEntrada == 45)
+						if(contandoVAloresEntrada == 1 || contandoVAloresEntrada == 4)
 						{
-							addch(tomandoValoresEntrada);
-							echo();
-							guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada;
-							contandoVAloresEntrada++; 
-						}
-					}	
-				}//fin while para validacion de entrada
-				contandoVAloresEntrada=0;
-				int ubicacionPieza = positionPiece(arr,(guardaCoordenadasAMover[0])-'A',(guardaCoordenadasAMover[1])-'1');
-				if( ubicacionPieza < 32 && arr[ubicacionPieza]->getColor() == "Blanca" 
-					&& arr[ubicacionPieza]->mover(arr,(guardaCoordenadasAMover[3])-'A',(guardaCoordenadasAMover[4])-'1') == true){
+							if((tomandoValoresEntrada >= 49) && (tomandoValoresEntrada <= 56)){
 
-					borrarmapa();
-					dibujarpiezas(arr);
-					quienEstaJugando=false;
-					mvprintw(19,112,"             ");	
-					move(22,112);								
-				}
-				else{
-					mvprintw(26,90,"MOVIMIENTO INCORRECTO");
-					getch();
-					mvprintw(26,90,"                      ");
-					mvprintw(19,112,"             ");
-					move(19,112);
-				}
-			}		
-		}
+								addch(tomandoValoresEntrada);
+								echo();
+								guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada;
+								contandoVAloresEntrada++; 
+							}
+						}
+						if(contandoVAloresEntrada == 2)
+						{
+							if(tomandoValoresEntrada == 45)
+							{
+								addch(tomandoValoresEntrada);
+								echo();
+								guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada;
+								contandoVAloresEntrada++; 
+							}
+						}	
+					}//fin while para validacion de entrada
+					attroff(COLOR_PAIR(2));
+					contandoVAloresEntrada=0;
+					int ubicacionPieza = positionPiece(arr,(guardaCoordenadasAMover[0])-'A',(guardaCoordenadasAMover[1])-'1');
+					if( ubicacionPieza < 32 && arr[ubicacionPieza]->getColor() == "Blanca" 
+						&& arr[ubicacionPieza]->mover(arr,(guardaCoordenadasAMover[3])-'A',(guardaCoordenadasAMover[4])-'1')){
+
+						borrarmapa();
+						dibujarpiezas(arr);
+						mvprintw(19,112,"             ");	
+						move(22,112);
+						quienEstaJugando = false;								
+					}
+					else{
+						attron(COLOR_PAIR(1));
+						mvprintw(26,90,"MOVIMIENTO INCORRECTO");
+						attroff(COLOR_PAIR(1));
+						getch();
+						mvprintw(26,90,"                      ");
+						mvprintw(19,112,"             ");
+						move(19,112);
+					}
+				}//while final del primer jugador jugador 
+			
+				contandoVAloresEntrada=0;
+				// ------------------------------------------------- movimiento negras----------------------------------- 
+				while(quienEstaJugando == false){
+					attron(COLOR_PAIR(4));
+					while(contandoVAloresEntrada<5){
+
+						noecho();
+						tomandoValoresEntrada = getch();
+					
+						if(contandoVAloresEntrada == 0  || contandoVAloresEntrada == 3){
+
+							if((tomandoValoresEntrada >= 65) && (tomandoValoresEntrada <= 72)){
+
+								addch(tomandoValoresEntrada);
+								echo();
+								guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada; 
+								contandoVAloresEntrada++;
+							}
+						}
+
+						if(contandoVAloresEntrada == 1 || contandoVAloresEntrada == 4)
+						{
+							if((tomandoValoresEntrada >= 49) && (tomandoValoresEntrada <= 56)){
+
+								addch(tomandoValoresEntrada);
+								echo();
+								guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada;
+								contandoVAloresEntrada++; 
+							}
+						}
+						if(contandoVAloresEntrada == 2)
+						{
+							if(tomandoValoresEntrada == 45)
+							{
+								addch(tomandoValoresEntrada);
+								echo();
+								guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada;
+								contandoVAloresEntrada++; 
+							}
+						}	
+					}//fin while para validacion de entrada
+					attroff(COLOR_PAIR(4));
+					contandoVAloresEntrada=0;
+					int ubicacionPieza = positionPiece(arr,(guardaCoordenadasAMover[0])-'A',(guardaCoordenadasAMover[1])-'1');
+					if( ubicacionPieza < 32 && arr[ubicacionPieza]->getColor() == "Negra" 
+						&& arr[ubicacionPieza]->mover(arr,(guardaCoordenadasAMover[3])-'A',(guardaCoordenadasAMover[4])-'1')){
+
+						borrarmapa();
+						dibujarpiezas(arr);
+						mvprintw(19,112,"             ");	
+						move(22,112);
+						quienEstaJugando = true;								
+					}
+					else{
+						attron(COLOR_PAIR(1));
+						mvprintw(26,90,"MOVIMIENTO INCORRECTO");
+						attroff(COLOR_PAIR(1));
+						getch();
+						mvprintw(26,90,"                      ");
+						mvprintw(22,112,"             ");
+						move(22,112);
+					}
+				}//while final del segundo jugador
+				attron(COLOR_PAIR(1));
+				mvprintw(26,90,"SALIR?? (S/s)");
+				mvprintw(27,90,"Cualquier tecla para continuar");
+				attroff(COLOR_PAIR(1));
+				salirDelTablero = getch();
+				mvprintw(26,90,"                     ");
+				mvprintw(27,90,"                                      ");
+				mvprintw(22,112,"             ");
+				guardarPartidaJugada(arr);
+			}//while de la opcion de jugar otra vez o salir 	
+			guardarPartidaJugada(arr);
+		}// fin de la opcion de jugar nueva partida
 
 		if(seleccionMenu == '2'){
+
+			clear();
+			montarpartidaGuardada(arr);
+			mapainicial();
+			dibujarpiezas(arr);
+			
+			while(salirDelTablero != 'S' && salirDelTablero != 's' ){
+				move(19,112);
+				while(quienEstaJugando == true){
+					attron(COLOR_PAIR(2));
+					while(contandoVAloresEntrada<5){
+
+						noecho();
+						tomandoValoresEntrada = getch();
+					
+						if(contandoVAloresEntrada == 0  || contandoVAloresEntrada == 3){
+
+							if((tomandoValoresEntrada >= 65) && (tomandoValoresEntrada <= 72)){
+
+								addch(tomandoValoresEntrada);
+								echo();
+								guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada; 
+								contandoVAloresEntrada++;
+							}
+						}
+
+						if(contandoVAloresEntrada == 1 || contandoVAloresEntrada == 4)
+						{
+							if((tomandoValoresEntrada >= 49) && (tomandoValoresEntrada <= 56)){
+
+								addch(tomandoValoresEntrada);
+								echo();
+								guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada;
+								contandoVAloresEntrada++; 
+							}
+						}
+						if(contandoVAloresEntrada == 2)
+						{
+							if(tomandoValoresEntrada == 45)
+							{
+								addch(tomandoValoresEntrada);
+								echo();
+								guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada;
+								contandoVAloresEntrada++; 
+							}
+						}	
+					}//fin while para validacion de entrada
+
+					attroff(COLOR_PAIR(2));
+
+					contandoVAloresEntrada=0;
+					int ubicacionPieza = positionPiece(arr,(guardaCoordenadasAMover[0])-'A',(guardaCoordenadasAMover[1])-'1');
+
+					if( ubicacionPieza < 32 && arr[ubicacionPieza]->getColor() == "Blanca" 
+						&& arr[ubicacionPieza]->mover(arr,(guardaCoordenadasAMover[3])-'A',(guardaCoordenadasAMover[4])-'1')){
+
+						borrarmapa();
+						dibujarpiezas(arr);
+						mvprintw(19,112,"             ");	
+						move(22,112);
+						quienEstaJugando = false;								
+					}
+					else{
+						attron(COLOR_PAIR(1));
+						mvprintw(26,90,"MOVIMIENTO INCORRECTO");
+						attroff(COLOR_PAIR(1));
+						getch();
+						mvprintw(26,90,"                      ");
+						mvprintw(19,112,"             ");
+						move(19,112);
+					}
+				}//while final del primer jugador jugador 
+			
+				contandoVAloresEntrada=0;
+				// ------------------------------------------------- movimiento negras----------------------------------- 
+				while(quienEstaJugando == false){
+					attron(COLOR_PAIR(4));
+					while(contandoVAloresEntrada<5){
+
+						noecho();
+						tomandoValoresEntrada = getch();
+					
+						if(contandoVAloresEntrada == 0  || contandoVAloresEntrada == 3){
+
+							if((tomandoValoresEntrada >= 65) && (tomandoValoresEntrada <= 72)){
+
+								addch(tomandoValoresEntrada);
+								echo();
+								guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada; 
+								contandoVAloresEntrada++;
+							}
+						}
+
+						if(contandoVAloresEntrada == 1 || contandoVAloresEntrada == 4)
+						{
+							if((tomandoValoresEntrada >= 49) && (tomandoValoresEntrada <= 56)){
+
+								addch(tomandoValoresEntrada);
+								echo();
+								guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada;
+								contandoVAloresEntrada++; 
+							}
+						}
+						if(contandoVAloresEntrada == 2)
+						{
+							if(tomandoValoresEntrada == 45)
+							{
+								addch(tomandoValoresEntrada);
+								echo();
+								guardaCoordenadasAMover[contandoVAloresEntrada]= tomandoValoresEntrada;
+								contandoVAloresEntrada++; 
+							}
+						}	
+					}//fin while para validacion de entrada
+					attroff(COLOR_PAIR(4));
+					contandoVAloresEntrada=0;
+					int ubicacionPieza = positionPiece(arr,(guardaCoordenadasAMover[0])-'A',(guardaCoordenadasAMover[1])-'1');
+					if( ubicacionPieza < 32 && arr[ubicacionPieza]->getColor() == "Negra" 
+						&& arr[ubicacionPieza]->mover(arr,(guardaCoordenadasAMover[3])-'A',(guardaCoordenadasAMover[4])-'1')){
+
+						borrarmapa();
+						dibujarpiezas(arr);
+						mvprintw(19,112,"             ");	
+						move(22,112);
+						quienEstaJugando = true;								
+					}
+					else{
+						attron(COLOR_PAIR(1));
+						mvprintw(26,90,"MOVIMIENTO INCORRECTO");
+						attroff(COLOR_PAIR(1));
+						getch();
+						mvprintw(26,90,"                      ");
+						mvprintw(22,112,"             ");
+						move(22,112);
+					}
+				}//while final del segundo jugador
+				attron(COLOR_PAIR(1));
+				mvprintw(26,90,"SALIR?? (S/s)");
+				mvprintw(27,90,"Cualquier tecla para continuar");
+				attroff(COLOR_PAIR(1));
+				salirDelTablero = getch();
+				mvprintw(26,90,"                     ");
+				mvprintw(27,90,"                                      ");
+				mvprintw(22,112,"             ");
+				guardarPartidaJugada(arr);
+			}
 		}
 
 		if(seleccionMenu == '3'){
@@ -114,7 +357,7 @@ int main(int argc, char*argv[])
 		}
 	}
 
-	getch();
+	eliminarPiezas(arr);
 	endwin();			
 	return 0;
 }
@@ -122,6 +365,7 @@ int main(int argc, char*argv[])
 int mapainicial()
 {
 	//titulo del juego 
+	attron(COLOR_PAIR(1));
 	mvprintw(1,40,"*"); 
 	mvprintw(2,39,"* *"); 
 	mvprintw(3,38,"*****"); 
@@ -166,12 +410,11 @@ int mapainicial()
 	mvprintw(3,99,"   *");
 	mvprintw(4,99,"  *");
 	mvprintw(5,99,"*******");
+	attroff(COLOR_PAIR(1));
 
 	//damero indices
-
-	mvprintw(9,25,"+------+------+------+------+------+------+------+------+"); 
-	mvprintw(10,25,"|   1  |   2  |   3  |   4  |   5  |   6  |   7  |  8   |"); 
-	mvprintw(11,25,"+------+------+------+------+------+------+------+------+");
+	
+    attron(COLOR_PAIR(2));
 	mvprintw(12,25,"+------+------+------+------+------+------+------+------+");
 	mvprintw(13,25,"|      |      |      |      |      |      |      |      |");
 	mvprintw(14,25,"|      |      |      |      |      |      |      |      |");
@@ -197,6 +440,12 @@ int mapainicial()
 	mvprintw(34,25,"|      |      |      |      |      |      |      |      |");
 	mvprintw(35,25,"|      |      |      |      |      |      |      |      |");
 	mvprintw(36,25,"+------+------+------+------+------+------+------+------+");
+	attroff(COLOR_PAIR(2));
+
+	attron(COLOR_PAIR(3));
+	mvprintw(9,25,"+------+------+------+------+------+------+------+------+"); 
+	mvprintw(10,25,"|   1  |   2  |   3  |   4  |   5  |   6  |   7  |  8   |"); 
+	mvprintw(11,25,"+------+------+------+------+------+------+------+------+");
 	mvprintw(37,25,"+------+------+------+------+------+------+------+------+"); 
 	mvprintw(38,25,"|   1  |   2  |   3  |   4  |   5  |   6  |   7  |  8   |"); 
 	mvprintw(39,25,"+------+------+------+------+------+------+------+------+");
@@ -251,7 +500,7 @@ int mapainicial()
 	mvprintw(34,83,"| H |"); 
 	mvprintw(35,83,"|   |"); 
 	mvprintw(36,83,"+---+"); 
-
+	attroff(COLOR_PAIR(3));
 
 
 	mvprintw(13,90,"J1 = Jugador 1 ");
@@ -349,28 +598,40 @@ void dibujarpiezas(Pieza** p)
 			}
 			else{
 				if (p[i]->getTipo()=='T'){
+					attron(COLOR_PAIR(6));
 					mvprintw((13 + (p[i]->getx()*3)),(26 + (p[i]->gety()*7)), " Rook ");
 					mvprintw((14 + (p[i]->getx()*3)),(26 + (p[i]->gety()*7)), "  J2");
+					attroff(COLOR_PAIR(6));
 				}
 				if (p[i]->getTipo()=='C'){
+					attron(COLOR_PAIR(6));
 					mvprintw((13 + (p[i]->getx()*3)),(26 + (p[i]->gety()*7)), "Knight");
 					mvprintw((14 + (p[i]->getx()*3)),(26 + (p[i]->gety()*7)), "  J2");
+					attroff(COLOR_PAIR(6));
 				}
 				if (p[i]->getTipo()=='A'){
+					attron(COLOR_PAIR(6));
 					mvprintw((13 + (p[i]->getx()*3)),(26 + (p[i]->gety()*7)), "Bishop");
 					mvprintw((14 + (p[i]->getx()*3)),(26 + (p[i]->gety()*7)), "  J2");
+					attroff(COLOR_PAIR(6));
 				}
 				if (p[i]->getTipo()=='K'){
+					attron(COLOR_PAIR(6));
 					mvprintw((13 + (p[i]->getx()*3)),(26 + (p[i]->gety()*7)), " King");
 					mvprintw((14 + (p[i]->getx()*3)),(26 + (p[i]->gety()*7)), "  J2");
+					attroff(COLOR_PAIR(6));
 				}
 				if (p[i]->getTipo()=='Q'){
+					attron(COLOR_PAIR(6));
 					mvprintw((13 + (p[i]->getx()*3)),(26 + (p[i]->gety()*7)), " Queen");
 					mvprintw((14 + (p[i]->getx()*3)),(26 + (p[i]->gety()*7)), "  J2");
+					attroff(COLOR_PAIR(6));
 				}
 				if (p[i]->getTipo()=='P'){
+					attron(COLOR_PAIR(6));
 					mvprintw((13 + (p[i]->getx()*3)),(26 + (p[i]->gety()*7)), " Pawn");
 					mvprintw((14 + (p[i]->getx()*3)),(26 + (p[i]->gety()*7)), "  J2");
+					attroff(COLOR_PAIR(6));
 				}
 			}
 		}
@@ -397,14 +658,234 @@ int positionPiece(Pieza** p, int inX,int inY){
 	int position = 32;
 	for(int i=0; i<32; i++){
 
-		if(p[i]->getx() == inX &&  p[i]->gety() == inY && p[i]->getIsViva() == true){
-			position=i;
-			break;			
+		if(p[i]->getx() == inX &&  p[i]->gety() == inY && p[i]->getIsViva()){
+			return i;
 		}
 	}
 
 	return position;
-
 }
 
+void montarpartidaGuardada(Pieza**  p ){
 
+	char tempGuardar[32][5];
+	
+	FILE *guardarpartida; 
+	
+	guardarpartida = fopen("partidaGuardada.txt","r"); 
+
+	for (int i = 0; i < 32; i++){
+
+		for(int j=0; j<5;j++){
+
+			fread(&(tempGuardar[i][j]),sizeof(char),1,guardarpartida);
+		}
+	}
+
+	fclose(guardarpartida);
+
+	
+
+	//crear objetos con partida guardada
+
+	for(int i = 0; i<32; i++){
+		
+		if(tempGuardar[i][0] == 'N'){
+			if(tempGuardar[i][3] == 'P' ){
+				if(tempGuardar[i][4] == 'S'){
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Peon("Negra",tempx,tempy,'P',true);
+				}
+				else{
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Peon("Negra",tempx,tempy,'P',false);
+				}
+			}
+
+			if(tempGuardar[i][3] == 'A' ){
+				if(tempGuardar[i][4] == 'S'){
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Arfil("Negra",tempx,tempy,'A',true);
+
+				}
+				else{
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Arfil("Negra",tempx,tempy,'A',false);
+				}
+			}
+
+			if(tempGuardar[i][3] == 'K' ){
+				if(tempGuardar[i][4] == 'S'){
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Rey("Negra",tempx,tempy,'K',true);
+				}
+				else{
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Rey("Negra",tempx,tempy,'K',false);
+				}
+			}
+
+			if(tempGuardar[i][3] == 'T' ){
+				if(tempGuardar[i][4] == 'S'){
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Torre("Negra",tempx,tempy,'T',true);
+				}
+				else{
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Torre("Negra",tempx,tempy,'T',false);
+				}
+			}
+
+			if(tempGuardar[i][3] == 'C' ){
+				if(tempGuardar[i][4] == 'S'){
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Caballo("Negra",tempx,tempy,'C',true);
+				}
+				else{
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Caballo("Negra",tempx,tempy,'C',false);
+				}
+			}
+			if(tempGuardar[i][3] == 'Q' ){
+				if(tempGuardar[i][4] == 'S'){
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Reina("Negra",tempx,tempy,'Q',true);
+				}
+				else{
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Reina("Negra",tempx,tempy,'Q',false);
+				}
+			}
+		}//fin si son negras
+		else{
+
+			if(tempGuardar[i][3] == 'P' ){
+				if(tempGuardar[i][4] == 'S'){
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Peon("Blanca",tempx,tempy,'P',true);
+					
+				}
+				else{
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Peon("Blanca",tempx,tempy,'P',false);
+					
+				}
+			}
+
+			if(tempGuardar[i][3] == 'A' ){
+				if(tempGuardar[i][4] == 'S'){
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Arfil("Blanca",tempx,tempy,'A',true);
+				}
+				else{
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Arfil("Blanca",tempx,tempy,'A',false);
+				}
+			}
+
+			if(tempGuardar[i][3] == 'K' ){
+				if(tempGuardar[i][4] == 'S'){
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Rey("Blanca",tempx,tempy,'K',true);
+				}
+				else{
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Rey("Blanca",tempx,tempy,'K',false);
+				}
+			}
+
+			if(tempGuardar[i][3] == 'T' ){
+				if(tempGuardar[i][4] == 'S'){
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Torre("Blanca",tempx,tempy,'T',true);
+				}
+				else{
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Torre("Blanca",tempx,tempy,'T',false);
+				}
+			}
+
+			if(tempGuardar[i][3] == 'C' ){
+				if(tempGuardar[i][4] == 'S'){
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Caballo("Blanca",tempx,tempy,'C',true);
+				}
+				else{
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Caballo("Blanca",tempx,tempy,'C',false);
+				}
+			}
+			if(tempGuardar[i][3] == 'Q' ){
+				if(tempGuardar[i][4] == 'S'){
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Reina("Blanca",tempx,tempy,'Q',true);
+				}
+				else{
+					int tempx = tempGuardar[i][1]-48;
+					int tempy = tempGuardar[i][2]-48;
+					p[i] = new Reina("Blanca",tempx,tempy,'Q',false);
+				}
+			}
+		}
+	}
+}
+
+void guardarPartidaJugada(Pieza** p){
+
+	char tempGuardar [32][5];
+
+	for(int i =0; i<32; i++){
+		if(p[i]->getColor() == "Blanca"){
+			tempGuardar[i][0] = 'B';
+		} 
+		else{
+			tempGuardar[i][0] = 'N';
+		}
+		
+		tempGuardar[i][1] = p[i]->getx() +'0';
+		tempGuardar[i][2] = p[i]->gety() + '0';
+		tempGuardar[i][3] = p[i]->getTipo();
+		if(p[i]->getIsViva()){
+			tempGuardar[i][4] = 'S';
+		}
+		else{
+			tempGuardar[i][4] = 'n';
+		}
+	}
+	
+	FILE *guardarpartida; 
+	
+	guardarpartida = fopen("partidaGuardada.txt","w"); 
+
+	for (int i = 0; i < 32; i++){
+
+		for(int j=0; j<5;j++){
+
+			fwrite(&(tempGuardar[i][j]),sizeof(char),1,guardarpartida);
+		}
+	}
+	fclose(guardarpartida);	
+}

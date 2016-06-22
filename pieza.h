@@ -22,6 +22,5 @@ class Pieza{
 		void sety(int);
 		char getTipo()const;
 		bool getIsViva()const;
-		void setIsViva(bool);
-		
+		void setIsViva(bool);		
 };

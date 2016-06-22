@@ -2,6 +2,7 @@
 #include "pieza.h"
 #include <string> 
 #include <cmath>
+#include <ncurses.h>
 using std::string;
 
 Torre::Torre(string color,int x,int y, char tipo, bool isViva): Pieza(color,x,y,tipo,isViva){
@@ -12,39 +13,38 @@ Torre::~Torre(){
 
 bool Torre::mover(Pieza** p, int moveX, int moveY){
 
-	int comerpieza=32;
+	int comerPieza =32; 
 	for(int i=0; i<32; i++){
+		if(p[i]->getx() == moveX && p[i]->gety() == moveY && p[i]-> getIsViva()){
 
-		if(p[i]->getx() == moveX && p[i]->gety()== moveY && p[i]->getColor() != getColor()){
-			comerpieza = i;
-			break;
-		}
-	}
+			if(p[i]->getColor() == getColor()){
 
-	if((getx() == moveX || gety() == moveY) && validarSalto(p,moveX,moveY)){
-		setx(moveX);
-		sety(moveY);
-		if(comerpieza<32){
-			p[comerpieza]->setIsViva(false);
-		}
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-bool Torre::validarSalto(Pieza** p, int moveX, int moveY){
-
-	for(int i=0; i<32; i++){
-
-		if((p[i]->getx() == getx() || p[i]->gety() == gety()) && p[i]->getIsViva()){
-				
-			if(sqrt(pow(moveX-getx(),2)+pow(moveY-gety(),2)) > 
-				sqrt(pow(p[i]->getx()-getx(),2)+pow(p[i]->gety()-gety(),2))){
-
-				return false; 
+				comerPieza=33;
+			}
+			else{
+				comerPieza = i; 
 			}
 		}
 	}
-	return true;
+
+	if(moveX == getx() || moveY == gety()){
+
+		if(comerPieza <32){
+			setx(moveX);
+			sety(moveY);
+			p[comerPieza]->setIsViva(false);
+			return true;
+		}
+		else if(comerPieza == 32){
+			setx(moveX);
+			sety(moveY);
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	else{
+		return false; 
+	}
 }

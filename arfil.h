@@ -10,5 +10,4 @@ class Arfil:public Pieza{
 		Arfil(string,int,int,char,bool);
 		virtual ~Arfil(); 
 		bool mover(Pieza**,int,int);
-		bool validarSalto(Pieza**,int,int);
 };

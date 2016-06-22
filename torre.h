@@ -10,5 +10,5 @@ class Torre:public Pieza{
 		Torre(string,int,int,char,bool);
 		virtual ~Torre(); 
 		bool mover(Pieza**,int,int);
-		bool validarSalto(Pieza**,int,int);
+		
 };
